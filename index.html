@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layanan Integrasi - SI LABACIN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333; scroll-behavior: smooth; }
+        .header-section { background: linear-gradient(135deg, #004e92, #000428); color: white; padding: 50px 0; text-align: center; border-bottom: 5px solid #f39c12; }
+        .header-section img { width: 100px; margin-bottom: 15px; }
+        .navbar-custom { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-link { color: #004e92 !important; font-weight: 600; font-size: 0.85rem; }
+        .section-title { border-left: 5px solid #f39c12; padding-left: 15px; margin-bottom: 25px; color: #004e92; font-weight: 700; }
+        .card-custom { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; background: white; padding: 30px; }
+        .btn-calc { background-color: #f39c12; color: white; border-radius: 25px; font-weight: 600; border: none; transition: 0.3s; padding: 10px; }
+        .btn-calc:hover { background-color: #d3850e; color: white; }
+        .btn-primary-custom { background-color: #004e92; color: white; border-radius: 25px; border: none; padding: 12px 20px; font-weight: 600; }
+        .result-box { background-color: #e8f4fd; border-radius: 12px; padding: 20px; display: none; margin-top: 20px; border: 1px dashed #004e92; }
+        
+        /* Area Surat */
+        #previewSurat { display: none; background: #fff; font-family: 'Times New Roman', serif; color: #000; line-height: 1.6; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #previewSurat, #previewSurat * { visibility: visible; }
+            #previewSurat { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
+        .footer { text-align: center; padding: 30px; background-color: #000428; color: white; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <header class="header-section">
+        <div class="container">
+            <img src="https://lapaskotabaru.github.io/layanan-izin-luar-biasa/imipas.png" alt="Logo">
+            <p class="mb-1 fw-light">KEMENTERIAN IMIGRASI DAN PEMASYARAKATAN</p>
+            <h4 class="fw-bold">LAPAS KELAS III BATULICIN</h4>
+            <hr style="width: 60px; margin: 15px auto; border-top: 3px solid #f39c12; opacity: 1;">
+            <h1 class="fw-bold">SI LABACIN - LAYANAN INTEGRASI</h1>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+        <div class="container justify-content-center">
+            <div class="navbar-nav text-center d-flex flex-wrap justify-content-center">
+                <a class="nav-link px-2" href="#syarat">Syarat</a>
+                <a class="nav-link px-2" href="#kalkulator-ekspirasi">Kalkulator Ekspirasi</a>
+                <a class="nav-link px-2" href="#kalkulator-integrasi">Kalkulator 2/3</a>
+                <a class="nav-link px-2" href="#jaminan-online">Surat Jaminan</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <section id="syarat" class="card-custom">
+            <h2 class="section-title">Informasi Dasar</h2>
+            <p class="small text-muted">Integrasi adalah program pembinaan untuk menyatukan narapidana kembali ke masyarakat (PB, CB, CMB, Asimilasi).</p>
+        </section>
+
+        <section id="kalkulator-ekspirasi" class="card-custom">
+            <h2 class="section-title">Kalkulator Ekspirasi (Bebas Murni)</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Tanggal Mulai Ditahan:</label>
+                    <input type="date" id="eks_tglAwal" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Total Vonis (Tahun/Bulan):</label>
+                    <div class="input-group">
+                        <input type="number" id="eks_thnVonis" class="form-control" placeholder="Thn">
+                        <input type="number" id="eks_blnVonis" class="form-control" placeholder="Bln">
+                    </div>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Total Remisi Yang Didapat (Bulan):</label>
+                    <input type="number" id="eks_totalRemisi" class="form-control" placeholder="Contoh: 5">
+                </div>
+            </div>
+            <button class="btn btn-calc w-100" onclick="hitungEkspirasi()">HITUNG TANGGAL EKSPIRASI</button>
+            <div id="hasilEkspirasi" class="result-box">
+                <h5 class="fw-bold text-success">Hasil Ekspirasi:</h5>
+                <p class="mb-0">Perkiraan Tanggal Bebas Murni: <span id="res_tglEkspirasi" class="fw-bold text-dark fs-5"></span></p>
+            </div>
+        </section>
+
+        <section id="kalkulator-integrasi" class="card-custom">
+            <h2 class="section-title">Kalkulator 2/3 (Syarat Integrasi)</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Tanggal Mulai Ditahan:</label>
+                    <input type="date" id="int_tglAwal" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3"><label class="form-label">Tahun Pidana:</label><input type="number" id="int_thn" class="form-control"></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Bulan Pidana:</label><input type="number" id="int_bln" class="form-control"></div>
+            </div>
+            <button class="btn btn-calc w-100" onclick="hitungIntegrasi()">HITUNG TANGGAL 2/3</button>
+            <div id="hasilIntegrasi" class="result-box">
+                <h5 class="fw-bold text-primary">Hasil Integrasi:</h5>
+                <p class="mb-0">Syarat 2/3 Masa Pidana jatuh pada: <span id="res_tgl23" class="fw-bold text-danger fs-5"></span></p>
+            </div>
+        </section>
+        <section id="syarat" class="card-custom">
+            <h2 class="section-title">Persyaratan Integrasi</h2>
+            <p class="small text-muted">Integrasi adalah program pembinaan untuk menyatukan narapidana kembali ke masyarakat (PB, CB, CMB, Asimilasi).</p>
+            <ul>
+                        <li>Fotokopi KTP Penjamin (1 lembar)</li>
+                        <li>Fotokopi KK Penjamin (1 lembar).</li>
+                        <li>Surat Jaminan Keluarga, bisa di unduh di link <strong><a href="#" target="_blank">Berikut</a></strong></li>
+                        <li>Surat Pernyataan Narapidana/Anak.</li>
+                        <li>Materai 10.000 (4 lembar).</li>
+                        </ul>
+        </section>
+        <section id="jaminan-online" class="card-custom">
+            <h2 class="section-title">Buat Surat Jaminan Online</h2>
+            <p class="small text-muted">Anda dapat langsung membuat surat jaminan secara online melalui link berikut:<strong><a href="https://forms.gle/FgCJASyVdwuVughZ7" target="_blank"> Klik</a></strong></p>
+            </section>
+
+        <div class="text-center"><a href="https://lapasbatulicin.github.io/silabacin/" class="btn btn-sm btn-outline-secondary">⬅️ Kembali ke Menu Utama</a></div>
+    </div>
+
+    <footer class="footer"><p>&copy; 2026 Lapas Kelas III Batulicin - SI LABACIN</p></footer>
+
+    <script>
+        const opsiTgl = { year: 'numeric', month: 'long', day: 'numeric' };
+
+        // Kalkulator Ekspirasi
+        function hitungEkspirasi() {
+            const tglAwal = document.getElementById('eks_tglAwal').value;
+            const thn = parseInt(document.getElementById('eks_thnVonis').value) || 0;
+            const bln = parseInt(document.getElementById('eks_blnVonis').value) || 0;
+            const remisi = parseInt(document.getElementById('eks_totalRemisi').value) || 0;
+            if(!tglAwal) return alert("Pilih tanggal mulai ditahan!");
+            let d = new Date(tglAwal);
+            d.setFullYear(d.getFullYear() + thn);
+            d.setMonth(d.getMonth() + bln - remisi);
+            document.getElementById('res_tglEkspirasi').innerText = d.toLocaleDateString('id-ID', opsiTgl);
+            document.getElementById('hasilEkspirasi').style.display = 'block';
+        }
+
+        // Kalkulator Integrasi
+        function hitungIntegrasi() {
+            const tglAwal = document.getElementById('int_tglAwal').value;
+            const thn = parseInt(document.getElementById('int_thn').value) || 0;
+            const bln = parseInt(document.getElementById('int_bln').value) || 0;
+            if(!tglAwal) return alert("Pilih tanggal mulai ditahan!");
+            let totalBln = (thn * 12) + bln;
+            let duaPertiga = (totalBln * 2) / 3;
+            let d = new Date(tglAwal);
+            d.setMonth(d.getMonth() + duaPertiga);
+            document.getElementById('res_tgl23').innerText = d.toLocaleDateString('id-ID', opsiTgl);
+            document.getElementById('hasilIntegrasi').style.display = 'block';
+        }
+
+        // Generate Tampilan Surat
+        function generateSurat() {
+            const nP = document.getElementById('namaP').value;
+            const nW = document.getElementById('namaW').value;
+            if(!nP || !nW) return alert("Isi nama penjamin dan WBP!");
+            document.getElementById('p_namaP').innerText = nP;
+            document.getElementById('p_namaTtd').innerText = nP;
+            document.getElementById('p_namaW').innerText = nW;
+            document.getElementById('p_alamatP').innerText = document.getElementById('alamatP').value || '................';
+            document.getElementById('p_tgl').innerText = new Date().toLocaleDateString('id-ID', opsiTgl);
+            document.getElementById('previewSurat').style.display = 'block';
+            
+            // Auto scroll ke bawah
+            document.getElementById('previewSurat').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // FUNGSI DOWNLOAD PDF
+        function downloadPDF() {
+            const element = document.getElementById('isiSuratPDF');
+            const namaWBP = document.getElementById('p_namaW').innerText;
+            
+            const opt = {
+                margin:       [15, 15],
+                filename:     'Surat_Jaminan_' + namaWBP + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, logging: false, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Jalankan proses download
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
